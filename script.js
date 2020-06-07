@@ -6,24 +6,41 @@ function handleSubmit() {
 function getGeeklist(listNum) {
 
     url = "https://boardgamegeek.com/xmlapi/geeklist/" + listNum
-    //url = "https://boardgamegeek.com/xmlapi/geeklist/273473"
 
     fetch(url)
-        .then(response => response.text())
-        .catch(error => console.log(error))
-        .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-        .then(data => Array.from(data.getElementsByTagName("item"))
-                        .filter(el => el.getAttribute("subtype") == "boardgame")
-                        .map(el => el.getAttribute("objectname"))) 
-        .then(populateList)
+    .then(resp => resp.text())
+    .then(processResponse)
+    .catch(error => writeMessage("fetch failed -- likely BGG is processing your request; try again momentarily"))
 }
 
-function populateList(items) {
+function processResponse(text) {
+    var xml = (new window.DOMParser()).parseFromString(text, "text/xml")
+    var errors = xml.getElementsByTagName("error")
+    if (errors.length > 0) {
+        writeMessage(errors[0].getAttribute("message"))
+    } else {
+        populateList(xml)
+    }
+}
+    
+function populateList(xml) {
+    clear()
+    var items = Array.from(xml.getElementsByTagName("item"))
     var list = document.getElementById("list")
-    Array.from(list.children).forEach(child => list.removeChild(child))
     items.forEach(function (item) {
         var li = document.createElement("li")
-        li.innerHTML = item
+        li.innerHTML = item.getAttribute("objectname")
         list.appendChild(li)
     })
+}
+
+function writeMessage(msg) {
+    clear()
+    document.getElementById("message").innerHTML = msg
+}
+
+function clear() {
+    document.getElementById("list")
+    Array.from(list.children).forEach(child => list.removeChild(child))
+    document.getElementById("message").innerHTML=""
 }
