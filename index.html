@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script src="script.js"></script>
+
+<div>
+
+    <div>
+        <h1>BoardGameGeek List Aggregator</h1>
+        <p>Enter the GeekList id number below. BGGs API for accessing full
+        list information does not keep all lists availale, but creates the
+        information on request and caches the results for recently accessed
+        lists. So if your query returns no results but you know you have
+        a valid list number, just wait a few seconds and try again.</p>
+    </div>
+
+    <div>
+        <span>list id:</span><input type="text" id="listId"/>
+        <br>
+        <button onclick="handleSubmit()">submit</button>
+    </div>
+
+    <ol id="list"/>
+</div>
+
+</body>
+</html>
